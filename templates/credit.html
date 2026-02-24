@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Credit List</h2>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for c in data %}
+    <tr>
+        <td>{{ c['name'] }}</td>
+        <td>₹ {{ c['amount'] }}</td>
+        <td>{{ c['status'] }}</td>
+        <td>
+            {% if c['status'] == "Pending" %}
+            <a href="/settle/{{ c['id'] }}">Settle & Download Receipt</a>
+            {% else %}
+            Settled on {{ c['settled_date'] }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

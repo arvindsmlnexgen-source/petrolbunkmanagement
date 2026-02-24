@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Daily Report - {{ today }}</h2>
+
+<a href="/download_daily">
+    <button>Download PDF</button>
+</a>
+
+<br><br>
+
+<table>
+    <tr>
+        <th>Shift</th>
+        <th>Fuel</th>
+        <th>Litres</th>
+        <th>Price</th>
+        <th>Amount</th>
+        <th>Payment</th>
+    </tr>
+
+    {% for s in sales %}
+    <tr>
+        <td>{{ s['shift'] }}</td>
+        <td>{{ s['fuel_type'] }}</td>
+        <td>{{ s['quantity'] }}</td>
+        <td>{{ s['price_per_litre'] }}</td>
+        <td>{{ s['amount'] }}</td>
+        <td>{{ s['payment_mode'] }}</td>
+    </tr>
+    {% endfor %}
+
+    <tr>
+        <td colspan="4"><strong>Total</strong></td>
+        <td colspan="2"><strong>₹ {{ total }}</strong></td>
+    </tr>
+</table>
+
+{% endblock %}

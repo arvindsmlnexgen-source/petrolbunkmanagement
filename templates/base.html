@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Petrol Bunk Management</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+            background-color: #f4f6f9;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        nav {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        button {
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .kpi {
+            padding: 15px;
+            background: white;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Petrol Bunk Management</h1>
+
+<nav>
+    <a href="/">Dashboard</a>
+    <a href="/add_sale">Add Sale</a>
+    <a href="/add_credit">Add Credit</a>
+    <a href="/credit">Credit</a>
+    <a href="/daily_report">Daily Report</a>
+    <a href="/monthly_report">Monthly Report</a>
+    <a href="/set_price">Set Price</a>
+</nav>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

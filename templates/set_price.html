@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Set Fuel Prices (Today)</h2>
+
+<form method="POST">
+
+    <label>Petrol:</label>
+    <input name="petrol" type="number" step="0.01">
+    <br><br>
+
+    <label>Speed Petrol:</label>
+    <input name="speed_petrol" type="number" step="0.01">
+    <br><br>
+
+    <label>Diesel:</label>
+    <input name="diesel" type="number" step="0.01">
+    <br><br>
+
+    <label>Speed Diesel:</label>
+    <input name="speed_diesel" type="number" step="0.01">
+    <br><br>
+
+    <button type="submit">Save Prices</button>
+
+</form>
+
+{% endblock %}
