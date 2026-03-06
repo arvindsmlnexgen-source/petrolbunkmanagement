@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Cash Received</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:20px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+input{
+padding:8px;
+width:100%;
+}
+
+button{
+padding:8px 12px;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.add{
+background:#28a745;
+color:white;
+}
+
+.remove{
+background:#dc3545;
+color:white;
+}
+
+.save{
+background:#007bff;
+color:white;
+margin-top:15px;
+}
+
+.summary{
+margin-top:20px;
+font-size:18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Cash Received</h2>
+
+<form method="POST">
+
+<table id="cashTable">
+
+<tr>
+<th>Person Name</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+
+<tr>
+
+<td>
+<input name="person_name">
+</td>
+
+<td>
+<input name="amount" oninput="calculateTotal()">
+</td>
+
+<td>
+<button type="button" class="remove" onclick="removeRow(this)">Remove</button>
+</td>
+
+</tr>
+
+</table>
+
+<button type="button" class="add" onclick="addRow()">Add Person</button>
+
+<div class="summary">
+
+Grand Total: ₹ <span id="total">0</span>
+
+<br><br>
+
+Expected Cash:  
+<input id="expected" oninput="calculateDifference()">
+
+<br><br>
+
+Excess / Shortage: ₹ <span id="difference">0</span>
+
+</div>
+
+<button class="save">Save Cash</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+function addRow(){
+
+let table=document.getElementById("cashTable")
+
+let row=table.insertRow()
+
+row.innerHTML=`
+<td><input name="person_name"></td>
+<td><input name="amount" oninput="calculateTotal()"></td>
+<td><button type="button" class="remove" onclick="removeRow(this)">Remove</button></td>
+`
+
+}
+
+function removeRow(btn){
+
+btn.parentElement.parentElement.remove()
+
+calculateTotal()
+
+}
+
+function calculateTotal(){
+
+let amounts=document.getElementsByName("amount")
+
+let total=0
+
+amounts.forEach(a=>{
+
+total+=parseFloat(a.value)||0
+
+})
+
+document.getElementById("total").innerText=total
+
+calculateDifference()
+
+}
+
+function calculateDifference(){
+
+let expected=parseFloat(document.getElementById("expected").value)||0
+let total=parseFloat(document.getElementById("total").innerText)||0
+
+document.getElementById("difference").innerText = total - expected
+
+}
+
+</script>
+
+</body>
+
+</html>

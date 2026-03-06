@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Add Sale</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+}
+
+.container{
+width:900px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:20px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+input{
+padding:10px;
+width:150px;
+margin:5px;
+}
+
+button{
+padding:10px 20px;
+background:#28a745;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Add Pump Sales</h2>
+
+<form method="POST">
+
+<div class="card">
+<h3>Pump Cards (Litres)</h3>
+
+Pump1 Petrol  
+<input name="petrol_pump1">
+
+Pump2 Speed Petrol  
+<input name="speed_petrol">
+
+Pump1 Diesel  
+<input name="diesel_pump1">
+
+Pump2 Speed Diesel  
+<input name="speed_diesel">
+
+</div>
+
+<div class="card">
+<h3>Opening / Closing</h3>
+
+Petrol Opening  
+<input name="petrol_open">
+
+Petrol Closing  
+<input name="petrol_close">
+
+Diesel Opening  
+<input name="diesel_open">
+
+Diesel Closing  
+<input name="diesel_close">
+
+</div>
+
+<div class="card">
+<h3>Oil Sales</h3>
+
+Oil 20ML  
+<input name="oil20">
+
+Oil 40ML  
+<input name="oil40">
+
+</div>
+
+<button type="submit">Save Sale</button>
+
+<button onclick="history.back()">⬅ Back</button>
+
+</form>
+
+</div>
+
+</body>
+</html>

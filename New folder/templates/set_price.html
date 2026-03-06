@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Set Fuel Prices</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:20px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:10px;
+margin-bottom:15px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:12px;
+width:100%;
+background:#28a745;
+color:white;
+border:none;
+border-radius:5px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#218838;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Set Fuel & Oil Prices</h2>
+
+<form method="POST">
+
+Petrol Price
+<input name="petrol" value="{{data[1] if data}}">
+
+Speed Petrol Price
+<input name="speed_petrol" value="{{data[2] if data}}">
+
+Diesel Price
+<input name="diesel" value="{{data[3] if data}}">
+
+Speed Diesel Price
+<input name="speed_diesel" value="{{data[4] if data}}">
+
+Oil 20ML Price
+<input name="oil20" value="{{data[5] if data}}">
+
+Oil 40ML Price
+<input name="oil40" value="{{data[6] if data}}">
+
+<button type="submit">Save Prices</button>
+
+</form>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

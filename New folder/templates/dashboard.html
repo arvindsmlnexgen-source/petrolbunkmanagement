@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<div class="row">
+
+<!-- <a href="/transactions" class="btn btn-primary">
+Transactions
+</a>     -->
+
+<div class="col-md-3 card p-3 m-2">
+Petrol Litres
+<h3>{{sales[0]}}</h3>
+</div>
+
+<div class="col-md-3 card p-3 m-2">
+Speed Petrol
+<h3>{{sales[1]}}</h3>
+</div>
+
+<div class="col-md-3 card p-3 m-2">
+Diesel
+<h3>{{sales[2]}}</h3>
+</div>
+
+<div class="col-md-3 card p-3 m-2">
+Speed Diesel
+<h3>{{sales[3]}}</h3>
+</div>
+
+<a href="/transactions" class="btn btn-primary">
+Transactions
+</a>   
+
+<!-- <a href="/meter">
+<button>Meter Entry</button>
+</a> -->
+
+</div>
+
+{% endblock %}
