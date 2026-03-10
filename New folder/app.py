@@ -235,6 +235,19 @@ def credit():
 
     conn = get_db()
     cur = conn.cursor()
+    
+    # Ensure credits table exists
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS credits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        customer_name TEXT,
+        fuel_type TEXT,
+        litres REAL,
+        amount REAL
+    )
+    """)
+    conn.commit()
 
     if request.method == "POST":
 
@@ -262,6 +275,37 @@ def daily_report():
 
     conn = get_db()
     cur = conn.cursor()
+    
+    # Ensure tables exist with correct schema
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        description TEXT,
+        amount REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS cash_received (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        source TEXT,
+        amount REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS credits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        customer_name TEXT,
+        fuel_type TEXT,
+        litres REAL,
+        amount REAL
+    )
+    """)
+    conn.commit()
 
     cur.execute("""
     SELECT 
