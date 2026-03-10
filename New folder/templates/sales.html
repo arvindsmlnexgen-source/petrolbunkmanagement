@@ -1,272 +1,225 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Sale - Petrol Pump Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<title>Sales Entry</title>
+        :root {
+            --primary: #667eea;
+            --primary-dark: #764ba2;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
 
-<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
 
-body{
-font-family:Arial;
-background:#f4f6f9;
-margin:0;
-padding:20px;
-}
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
 
-.container{
-max-width:1100px;
-margin:auto;
-}
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid white;
+        }
 
-.back-button {
-    display: inline-block;
-    background: #667eea;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: 600;
-    margin-bottom: 20px;
-    transition: background 0.3s ease;
-}
+        .back-button:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-3px);
+        }
 
-.back-button:hover {
-    background: #764ba2;
-}
+        .page-header {
+            color: white;
+            margin-bottom: 30px;
+        }
 
-h1{
-text-align:center;
-margin-bottom:30px;
-}
+        .page-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
 
-.card{
-background:white;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
-}
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:20px;
-}
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ecf0f1;
+        }
 
-input{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-border-radius:5px;
-border:1px solid #ccc;
-}
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-button{
-background:#28a745;
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:5px;
-font-size:16px;
-cursor:pointer;
-}
+        .form-section h3 {
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-button:hover{
-background:#218838;
-}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-</style>
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
 
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 1.5em;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<a href="/" class="back-button">← Back to Dashboard</a>
-
-<h1>Petrol Pump Sales</h1>
-
-<form method="POST">
-
-<!-- Date and Time -->
-<div class="card">
-<h2>Date & Time</h2>
-<div class="grid">
-<div>
-<h3>Date</h3>
-<input type="date" name="date" required>
-</div>
-<div>
-<h3>Time</h3>
-<input type="time" name="time" required>
-</div>
-</div>
-</div>
-
-<!-- Pump Cards -->
-
-<!-- <div class="card">
-
-<h2>Pump Sales (Litres)</h2>
-
-<div class="grid"> -->
-
-<!-- <div>
-<h3>Pump1 (Petrol)</h3>
-<input type="number" step="0.01" name="petrol_pump1" placeholder="Enter litres">
-</div>
-
-<div>
-<h3>Pump2 (Speed Petrol)</h3>
-<input type="number" step="0.01" name="speed_petrol_pump2" placeholder="Enter litres">
-</div>
-
-<div>
-<h3>Pump1 (Diesel)</h3>
-<input type="number" step="0.01" name="diesel_pump1" placeholder="Enter litres">
-</div>
-
-<div>
-<h3>Pump2 (Speed Diesel)</h3>
-<input type="number" step="0.01" name="speed_diesel_pump2" placeholder="Enter litres">
-</div>
-
-</div>
-
-</div> -->
-
-<!-- Meter Readings -->
-
-<div class="card">
-
-<h2>Meter Readings</h2>
-
-<div class="grid">
-
-<div>
-
-<h3>Petrol[Pump 1]</h3>
-
-Opening
-<input name="petrol_open">
-
-Closing
-<input name="petrol_close">
-
-Running
-<input name="petrol_running" readonly>
-
-</div>
-
-
-<div>
-
-<h3>Speed Petrol[Pump 2]</h3>
-
-Opening
-<input name="speed_petrol_open">
-
-Closing
-<input name="speed_petrol_close">
-
-Running
-<input name="speed_petrol_running" readonly>
-
-</div>
-
-
-<div>
-
-<h3>Diesel[Pump 1]</h3>
-
-Opening
-<input name="diesel_open">
-
-Closing
-<input name="diesel_close">
-
-Running
-<input name="diesel_running" readonly>
-
-</div>
-
-
-<div>
-
-<h3>Speed Diesel[Pump 2]</h3>
-
-Opening
-<input name="speed_diesel_open">
-
-Closing
-<input name="speed_diesel_close">
-
-Running
-<input name="speed_diesel_running" readonly>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- Oil -->
-
-<div class="card">
-
-<h2>Oil Sales</h2>
-
-Oil 20ML
-<input name="oil20">
-
-Oil 40ML
-<input name="oil40">
-
-</div>
-
-<div style="text-align:center">
-
-<button type="submit">Save Sales</button>
-
-<!-- <button onclick="history.back()">⬅ Back</button> -->
-
-</div>
-
-</form>
-
-</div>
-
-<script>
-
-function calc(openName, closeName, runName){
-
-let open = parseFloat(document.getElementsByName(openName)[0].value) || 0
-let close = parseFloat(document.getElementsByName(closeName)[0].value) || 0
-
-document.getElementsByName(runName)[0].value = close - open
-
-}
-
-document.querySelectorAll("input").forEach(input=>{
-
-input.addEventListener("input",function(){
-
-calc("petrol_open","petrol_close","petrol_running")
-calc("speed_petrol_open","speed_petrol_close","speed_petrol_running")
-calc("diesel_open","diesel_close","diesel_running")
-calc("speed_diesel_open","speed_diesel_close","speed_diesel_running")
-
-})
-
-})
-
-
-
-</script>
-
+    <div class="container">
+        <a href="/" class="back-button">← Back to Dashboard</a>
+
+        <div class="page-header">
+            <h1>➕ Add Sale Entry</h1>
+        </div>
+
+        <div class="form-container">
+            <form method="POST">
+                <!-- Date and Time Section -->
+                <div class="form-section">
+                    <h3>📅 Date & Time</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date *</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Time *</label>
+                            <input type="time" id="time" name="time" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pump Sales Section -->
+                <div class="form-section">
+                    <h3>⛽ Pump Sales (in Liters)</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="petrol">Petrol Pump 1 *</label>
+                            <input type="number" id="petrol" name="petrol" step="0.01" placeholder="Enter liters" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="speed_petrol">Speed Petrol Pump 2 *</label>
+                            <input type="number" id="speed_petrol" name="speed_petrol" step="0.01" placeholder="Enter liters" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="diesel">Diesel Pump 1 *</label>
+                            <input type="number" id="diesel" name="diesel" step="0.01" placeholder="Enter liters" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="speed_diesel">Speed Diesel Pump 2 *</label>
+                            <input type="number" id="speed_diesel" name="speed_diesel" step="0.01" placeholder="Enter liters" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">💾 Save Sale Entry</button>
+            </form>
+        </div>
+    </div>
 </body>
-
 </html>

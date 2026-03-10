@@ -1,33 +1,98 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-
-<h2>Dashboard</h2>
-
-<div class="row">
-
-<!-- <a href="/transactions" class="btn btn-primary">
-Transactions
-</a>     -->
-
-<div class="col-md-3 card p-3 m-2">
-Petrol Litres
-<h3>{{sales[0]}}</h3>
+<div class="page-header">
+    <h1>📊 Dashboard</h1>
+    <p>Real-time Petrol Pump Operations Overview</p>
 </div>
 
-<div class="col-md-3 card p-3 m-2">
-Speed Petrol
-<h3>{{sales[1]}}</h3>
+<div class="kpi-grid">
+    <div class="kpi-card success">
+        <div class="kpi-label">Total Petrol Pump 1</div>
+        <div class="kpi-value positive">
+            {% if sales[0] %}{{ "%.0f"|format(sales[0]) }}{% else %}0{% endif %} L
+        </div>
+        <div class="kpi-subtitle">Liters sold</div>
+    </div>
+
+    <div class="kpi-card info">
+        <div class="kpi-label">Speed Petrol Pump 2</div>
+        <div class="kpi-value neutral">
+            {% if sales[1] %}{{ "%.0f"|format(sales[1]) }}{% else %}0{% endif %} L
+        </div>
+        <div class="kpi-subtitle">Liters sold</div>
+    </div>
+
+    <div class="kpi-card success">
+        <div class="kpi-label">Total Diesel Pump 1</div>
+        <div class="kpi-value positive">
+            {% if sales[2] %}{{ "%.0f"|format(sales[2]) }}{% else %}0{% endif %} L
+        </div>
+        <div class="kpi-subtitle">Liters sold</div>
+    </div>
+
+    <div class="kpi-card info">
+        <div class="kpi-label">Speed Diesel Pump 2</div>
+        <div class="kpi-value neutral">
+            {% if sales[3] %}{{ "%.0f"|format(sales[3]) }}{% else %}0{% endif %} L
+        </div>
+        <div class="kpi-subtitle">Liters sold</div>
+    </div>
+
+    <div class="kpi-card danger">
+        <div class="kpi-label">Total Expenses</div>
+        <div class="kpi-value negative">
+            ₹ {% if expenses %}{{ "%.2f"|format(expenses) }}{% else %}0{% endif %}
+        </div>
+        <div class="kpi-subtitle">Operational costs</div>
+    </div>
+
+    <div class="kpi-card success">
+        <div class="kpi-label">Cash Received</div>
+        <div class="kpi-value positive">
+            ₹ {% if cash %}{{ "%.2f"|format(cash) }}{% else %}0{% endif %}
+        </div>
+        <div class="kpi-subtitle">Total collected</div>
+    </div>
 </div>
 
-<div class="col-md-3 card p-3 m-2">
-Diesel
-<h3>{{sales[2]}}</h3>
+<div class="action-section">
+    <h2>Quick Actions</h2>
+    <div class="action-grid">
+        <a href="/sales" class="action-btn success">
+            <span>➕</span> Add Sale
+        </a>
+        <a href="/expenses" class="action-btn danger">
+            <span>💰</span> Add Expense
+        </a>
+        <a href="/cash" class="action-btn info">
+            <span>💵</span> Cash Received
+        </a>
+        <a href="/credit" class="action-btn warning">
+            <span>📝</span> Credit Sales
+        </a>
+        <a href="/todays_sales" class="action-btn secondary">
+            <span>📊</span> Today's KPI
+        </a>
+        <a href="/set_price" class="action-btn">
+            <span>💲</span> Set Price
+        </a>
+    </div>
 </div>
 
-<div class="col-md-3 card p-3 m-2">
-Speed Diesel
-<h3>{{sales[3]}}</h3>
+<div class="action-section">
+    <h2>Reports</h2>
+    <div class="action-grid">
+        <a href="/daily_report" class="action-btn secondary">
+            <span>📅</span> Daily Report
+        </a>
+        <a href="/monthly_report" class="action-btn secondary">
+            <span>📈</span> Monthly Report
+        </a>
+    </div>
+</div>
+
+{% endblock %}
 </div>
 
 <a href="/transactions" class="btn btn-primary">
