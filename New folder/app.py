@@ -1,9 +1,19 @@
 from flask import Flask, render_template, request, redirect
 import sqlite3
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 DATABASE = "database.db"
+
+def get_shift(hour):
+    """Determine shift based on hour"""
+    if 6 <= hour < 12:
+        return "Morning"
+    elif 12 <= hour < 18:
+        return "Afternoon"
+    else:
+        return "Night"
 
 
 def get_db():
@@ -20,6 +30,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS sales (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT,
+        time TEXT,
         petrol_pump1 REAL,
         speed_petrol_pump2 REAL,
         diesel_pump1 REAL,
@@ -96,6 +107,7 @@ def dashboard():
     CREATE TABLE IF NOT EXISTS sales (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT,
+        time TEXT,
         petrol_pump1 REAL,
         speed_petrol_pump2 REAL,
         diesel_pump1 REAL,
@@ -153,6 +165,7 @@ def sales():
     if request.method == "POST":
 
         date = request.form["date"]
+        time = request.form.get("time", datetime.now().strftime("%H:%M"))
         petrol = request.form["petrol"]
         speed_petrol = request.form["speed_petrol"]
         diesel = request.form["diesel"]
@@ -164,13 +177,14 @@ def sales():
         cur.execute("""
         INSERT INTO sales (
         date,
+        time,
         petrol_pump1,
         speed_petrol_pump2,
         diesel_pump1,
         speed_diesel_pump2
         )
-        VALUES (?,?,?,?,?)
-        """, (date, petrol, speed_petrol, diesel, speed_diesel))
+        VALUES (?,?,?,?,?,?)
+        """, (date, time, petrol, speed_petrol, diesel, speed_diesel))
 
         db.commit()
 
@@ -421,11 +435,16 @@ def todays_sales():
     db = get_db()
     cur = db.cursor()
     
+    # Get date filter from query params
+    selected_date = request.args.get('date', datetime.now().strftime('%Y-%m-%d'))
+    selected_shift = request.args.get('shift', 'all')
+    
     # Ensure tables exist
     cur.execute("""
     CREATE TABLE IF NOT EXISTS sales (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT,
+        time TEXT,
         petrol_pump1 REAL,
         speed_petrol_pump2 REAL,
         diesel_pump1 REAL,
@@ -464,7 +483,71 @@ def todays_sales():
     """)
     db.commit()
     
-    # Get today's sales data
+    # Get today's prices
+    cur.execute("SELECT * FROM prices LIMIT 1")
+    prices = cur.fetchone()
+    
+    # Initialize shift data
+    shift_data = {
+        'Morning': {'sales': None, 'revenue': 0, 'expenses': 0, 'net_income': 0},
+        'Afternoon': {'sales': None, 'revenue': 0, 'expenses': 0, 'net_income': 0},
+        'Night': {'sales': None, 'revenue': 0, 'expenses': 0, 'net_income': 0}
+    }
+    
+    total_revenue = 0
+    total_expenses = 0
+    total_net_income = 0
+    
+    # Get sales data for each shift
+    for shift_name, hours in [('Morning', (6, 12)), ('Afternoon', (12, 18)), ('Night', (18, 24))]:
+        start_hour = hours[0]
+        end_hour = hours[1]
+        
+        # Get shift sales
+        cur.execute(f"""
+        SELECT 
+        SUM(petrol_pump1) as petrol_pump1,
+        SUM(speed_petrol_pump2) as speed_petrol_pump2,
+        SUM(diesel_pump1) as diesel_pump1,
+        SUM(speed_diesel_pump2) as speed_diesel_pump2
+        FROM sales
+        WHERE date = ? AND CAST(strftime('%H', time) AS INTEGER) >= ? AND CAST(strftime('%H', time) AS INTEGER) < ?
+        """, (selected_date, start_hour, end_hour))
+        
+        sales = cur.fetchone()
+        
+        # Calculate revenue for shift
+        revenue = 0
+        if sales and prices:
+            revenue += (sales['petrol_pump1'] or 0) * (prices['petrol'] or 0)
+            revenue += (sales['speed_petrol_pump2'] or 0) * (prices['speed_petrol'] or 0)
+            revenue += (sales['diesel_pump1'] or 0) * (prices['diesel'] or 0)
+            revenue += (sales['speed_diesel_pump2'] or 0) * (prices['speed_diesel'] or 0)
+        
+        # Get shift expenses
+        cur.execute(f"""
+        SELECT SUM(amount) as total_expenses FROM expenses 
+        WHERE date = ? AND CAST(strftime('%H', strftime('%Y-%m-%d %H:00:00', 'now')) AS INTEGER) >= ? 
+        AND CAST(strftime('%H', strftime('%Y-%m-%d %H:00:00', 'now')) AS INTEGER) < ?
+        """, (selected_date, start_hour, end_hour))
+        
+        expenses_result = cur.fetchone()
+        expenses = expenses_result['total_expenses'] or 0
+        
+        net_income = revenue - expenses
+        
+        shift_data[shift_name] = {
+            'sales': sales,
+            'revenue': revenue,
+            'expenses': expenses,
+            'net_income': net_income
+        }
+        
+        total_revenue += revenue
+        total_expenses += expenses
+        total_net_income += net_income
+    
+    # Get total day data
     cur.execute("""
     SELECT 
     SUM(petrol_pump1) as petrol_pump1,
@@ -472,42 +555,25 @@ def todays_sales():
     SUM(diesel_pump1) as diesel_pump1,
     SUM(speed_diesel_pump2) as speed_diesel_pump2
     FROM sales
-    WHERE date = date('now')
-    """)
+    WHERE date = ?
+    """, (selected_date,))
     
-    sales = cur.fetchone()
-    
-    # Get today's prices
-    cur.execute("SELECT * FROM prices LIMIT 1")
-    prices = cur.fetchone()
-    
-    # Calculate revenue
-    revenue = 0
-    if sales and prices:
-        revenue += (sales['petrol_pump1'] or 0) * (prices['petrol'] or 0)
-        revenue += (sales['speed_petrol_pump2'] or 0) * (prices['speed_petrol'] or 0)
-        revenue += (sales['diesel_pump1'] or 0) * (prices['diesel'] or 0)
-        revenue += (sales['speed_diesel_pump2'] or 0) * (prices['speed_diesel'] or 0)
-    
-    # Get today's expenses
-    cur.execute("SELECT SUM(amount) as total_expenses FROM expenses WHERE date=date('now')")
-    expenses_result = cur.fetchone()
-    expenses = expenses_result['total_expenses'] or 0
+    total_sales = cur.fetchone()
     
     # Get today's credit sales
-    cur.execute("SELECT SUM(amount) as total_credit FROM credits WHERE date=date('now')")
+    cur.execute("SELECT SUM(amount) as total_credit FROM credits WHERE date=?", (selected_date,))
     credit_result = cur.fetchone()
     credit_sales = credit_result['total_credit'] or 0
     
-    # Calculate net income
-    net_income = revenue - expenses
-    
     return render_template("todays_sales.html",
-                           revenue=revenue,
-                           expenses=expenses,
+                           selected_date=selected_date,
+                           selected_shift=selected_shift,
+                           shift_data=shift_data,
+                           total_revenue=total_revenue,
+                           total_expenses=total_expenses,
+                           total_net_income=total_net_income,
+                           total_sales=total_sales,
                            credit_sales=credit_sales,
-                           net_income=net_income,
-                           sales=sales,
                            prices=prices)
 
 

@@ -3,71 +3,133 @@
 <head>
     <title>Today's Sales - Income Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
-            margin: auto;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(-3px);
         }
 
         .header {
             color: white;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-
-        .header p {
-            margin: 10px 0 0 0;
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
             margin-bottom: 30px;
         }
 
-        .kpi-card {
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .filters {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-filter {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn-filter:hover {
+            background: #764ba2;
+        }
+
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .kpi-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .kpi-label {
+        .summary-card h3 {
             color: #666;
-            font-size: 0.9em;
+            font-size: 0.85em;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
-            font-weight: 600;
         }
 
-        .kpi-value {
-            font-size: 2.5em;
+        .summary-value {
+            font-size: 2.2em;
             font-weight: bold;
-            margin: 15px 0;
             color: #333;
+            margin: 15px 0;
         }
 
         .positive {
@@ -82,32 +144,118 @@
             color: #3498db;
         }
 
-        .kpi-subtext {
-            font-size: 0.85em;
-            color: #999;
-            margin-top: 10px;
+        .shift-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .shift-container h2 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .shift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .shift-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .shift-card.morning {
+            border-left-color: #f39c12;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6cc 100%);
+        }
+
+        .shift-card.afternoon {
+            border-left-color: #3498db;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        }
+
+        .shift-card.night {
+            border-left-color: #2c3e50;
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+        }
+
+        .shift-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .shift-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            color: #555;
+        }
+
+        .shift-stat:last-child {
+            border-bottom: none;
+        }
+
+        .shift-stat-label {
+            font-weight: 600;
+        }
+
+        .shift-stat-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .net-income-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .net-income-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .net-income-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
         }
 
         .details-section {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 25px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
-        .details-section h2 {
+        .details-section h3 {
             color: #333;
-            border-bottom: 3px solid #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
-            margin-top: 0;
         }
 
         .detail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
         }
 
         .detail-item {
@@ -120,71 +268,39 @@
         .detail-label {
             color: #666;
             font-size: 0.85em;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .detail-value {
-            font-size: 1.5em;
+            font-size: 1.4em;
             font-weight: bold;
             color: #333;
-        }
-
-        .back-button {
-            display: inline-block;
-            background: white;
-            color: #667eea;
-            padding: 12px 25px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-button:hover {
-            background: #667eea;
-            color: white;
-            transform: translateX(-3px);
-        }
-
-        .summary-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .summary-box h3 {
-            margin: 0 0 20px 0;
-            font-size: 1.3em;
-        }
-
-        .summary-value {
-            font-size: 3em;
-            font-weight: bold;
-            margin: 20px 0;
         }
 
         .no-data {
             text-align: center;
             padding: 40px;
             color: #999;
+            background: white;
+            border-radius: 10px;
         }
 
         @media (max-width: 768px) {
-            .kpi-grid {
-                grid-template-columns: 1fr;
-            }
-
             .header h1 {
                 font-size: 1.8em;
             }
 
-            .kpi-value {
+            .summary-value {
                 font-size: 1.8em;
+            }
+
+            .shift-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
     </style>
@@ -194,105 +310,147 @@
         <a href="/" class="back-button">← Back to Dashboard</a>
 
         <div class="header">
-            <h1>📊 Today's Sales Report</h1>
-            <p>Real-time Income & Expense Dashboard</p>
+            <h1>📊 Sales Report with Shift Analysis</h1>
+            <p>Track income by shifts and dates</p>
         </div>
 
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">Total Revenue</div>
-                <div class="kpi-value positive">₹ {{ "%.2f"|format(revenue) }}</div>
-                <div class="kpi-subtext">From all fuel sales</div>
-            </div>
+        <!-- Filters -->
+        <div class="filters">
+            <form method="GET" style="display: flex; gap: 15px; flex-wrap: wrap; width: 100%; align-items: center;">
+                <div class="filter-group">
+                    <label for="date">Select Date:</label>
+                    <input type="date" id="date" name="date" value="{{ selected_date }}" required>
+                </div>
+                <button type="submit" class="btn-filter">Apply Filter</button>
+            </form>
+        </div>
 
-            <div class="kpi-card">
-                <div class="kpi-label">Total Expenses</div>
-                <div class="kpi-value negative">₹ {{ "%.2f"|format(expenses) }}</div>
-                <div class="kpi-subtext">Operational costs</div>
+        <!-- Overall Summary -->
+        <div class="summary-section">
+            <div class="summary-card">
+                <h3>Total Revenue</h3>
+                <div class="summary-value positive">₹ {{ "%.2f"|format(total_revenue) }}</div>
             </div>
-
-            <div class="kpi-card">
-                <div class="kpi-label">Credit Sales</div>
-                <div class="kpi-value neutral">₹ {{ "%.2f"|format(credit_sales) }}</div>
-                <div class="kpi-subtext">Pending collections</div>
+            <div class="summary-card">
+                <h3>Total Expenses</h3>
+                <div class="summary-value negative">₹ {{ "%.2f"|format(total_expenses) }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Net Income</h3>
+                <div class="summary-value {% if total_net_income >= 0 %}positive{% else %}negative{% endif %}">
+                    ₹ {{ "%.2f"|format(total_net_income) }}
+                </div>
             </div>
         </div>
 
-        <div class="summary-box">
-            <h3>Today's Net Income</h3>
-            {% if net_income >= 0 %}
-                <div class="summary-value positive">₹ {{ "%.2f"|format(net_income) }}</div>
-                <p>Profit Generated Today ✓</p>
-            {% else %}
-                <div class="summary-value negative">₹ {{ "%.2f"|format(net_income) }}</div>
-                <p>Loss Today</p>
-            {% endif %}
+        <!-- Shift Analysis -->
+        <div class="shift-container">
+            <h2>📈 Shift-wise Profit Analysis</h2>
+            <div class="shift-grid">
+                <!-- Morning Shift -->
+                <div class="shift-card morning">
+                    <div class="shift-name">🌅 Morning Shift (6 AM - 12 PM)</div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Revenue:</span>
+                        <span class="shift-stat-value positive">₹ {{ "%.2f"|format(shift_data['Morning']['revenue']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Expenses:</span>
+                        <span class="shift-stat-value negative">₹ {{ "%.2f"|format(shift_data['Morning']['expenses']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Net Profit:</span>
+                        <span class="shift-stat-value {% if shift_data['Morning']['net_income'] >= 0 %}positive{% else %}negative{% endif %}">
+                            ₹ {{ "%.2f"|format(shift_data['Morning']['net_income']) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Afternoon Shift -->
+                <div class="shift-card afternoon">
+                    <div class="shift-name">☀️ Afternoon Shift (12 PM - 6 PM)</div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Revenue:</span>
+                        <span class="shift-stat-value positive">₹ {{ "%.2f"|format(shift_data['Afternoon']['revenue']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Expenses:</span>
+                        <span class="shift-stat-value negative">₹ {{ "%.2f"|format(shift_data['Afternoon']['expenses']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Net Profit:</span>
+                        <span class="shift-stat-value {% if shift_data['Afternoon']['net_income'] >= 0 %}positive{% else %}negative{% endif %}">
+                            ₹ {{ "%.2f"|format(shift_data['Afternoon']['net_income']) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Night Shift -->
+                <div class="shift-card night">
+                    <div class="shift-name">🌙 Night Shift (6 PM - 6 AM)</div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Revenue:</span>
+                        <span class="shift-stat-value positive">₹ {{ "%.2f"|format(shift_data['Night']['revenue']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Expenses:</span>
+                        <span class="shift-stat-value negative">₹ {{ "%.2f"|format(shift_data['Night']['expenses']) }}</span>
+                    </div>
+                    <div class="shift-stat">
+                        <span class="shift-stat-label">Net Profit:</span>
+                        <span class="shift-stat-value {% if shift_data['Night']['net_income'] >= 0 %}positive{% else %}negative{% endif %}">
+                            ₹ {{ "%.2f"|format(shift_data['Night']['net_income']) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overall Net Income -->
+            <div class="net-income-card">
+                <h3>Day Total Net Income</h3>
+                <div class="net-income-value {% if total_net_income >= 0 %}positive{% else %}negative{% endif %}">
+                    ₹ {{ "%.2f"|format(total_net_income) }}
+                </div>
+                <p>{% if total_net_income >= 0 %}Profit ✓{% else %}Loss{% endif %}</p>
+            </div>
         </div>
 
-        {% if sales and prices %}
-        <div class="details-section">
-            <h2>Sales Breakdown (By Fuel Type)</h2>
+        <!-- Detailed Sales Breakdown -->
+        {% if total_sales and prices %}
+        <div class="details-section" style="margin-top: 30px;">
+            <h3>Total Sales Breakdown by Fuel Type</h3>
             <div class="detail-grid">
-                {% if sales['petrol_pump1'] and prices['petrol'] %}
+                {% if total_sales['petrol_pump1'] and prices['petrol'] %}
                 <div class="detail-item">
                     <div class="detail-label">Petrol Pump 1</div>
-                    <div class="detail-value">{{ "%.0f"|format(sales['petrol_pump1']) }} L</div>
-                    <div class="kpi-subtext">@ ₹ {{ "%.2f"|format(prices['petrol']) }}/L = ₹ {{ "%.2f"|format((sales['petrol_pump1'] or 0) * (prices['petrol'] or 0)) }}</div>
+                    <div class="detail-value">{{ "%.0f"|format(total_sales['petrol_pump1']) }} L</div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">@ ₹ {{ "%.2f"|format(prices['petrol']) }}/L</div>
                 </div>
                 {% endif %}
 
-                {% if sales['speed_petrol_pump2'] and prices['speed_petrol'] %}
+                {% if total_sales['speed_petrol_pump2'] and prices['speed_petrol'] %}
                 <div class="detail-item">
                     <div class="detail-label">Speed Petrol Pump 2</div>
-                    <div class="detail-value">{{ "%.0f"|format(sales['speed_petrol_pump2']) }} L</div>
-                    <div class="kpi-subtext">@ ₹ {{ "%.2f"|format(prices['speed_petrol']) }}/L = ₹ {{ "%.2f"|format((sales['speed_petrol_pump2'] or 0) * (prices['speed_petrol'] or 0)) }}</div>
+                    <div class="detail-value">{{ "%.0f"|format(total_sales['speed_petrol_pump2']) }} L</div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">@ ₹ {{ "%.2f"|format(prices['speed_petrol']) }}/L</div>
                 </div>
                 {% endif %}
 
-                {% if sales['diesel_pump1'] and prices['diesel'] %}
+                {% if total_sales['diesel_pump1'] and prices['diesel'] %}
                 <div class="detail-item">
                     <div class="detail-label">Diesel Pump 1</div>
-                    <div class="detail-value">{{ "%.0f"|format(sales['diesel_pump1']) }} L</div>
-                    <div class="kpi-subtext">@ ₹ {{ "%.2f"|format(prices['diesel']) }}/L = ₹ {{ "%.2f"|format((sales['diesel_pump1'] or 0) * (prices['diesel'] or 0)) }}</div>
+                    <div class="detail-value">{{ "%.0f"|format(total_sales['diesel_pump1']) }} L</div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">@ ₹ {{ "%.2f"|format(prices['diesel']) }}/L</div>
                 </div>
                 {% endif %}
 
-                {% if sales['speed_diesel_pump2'] and prices['speed_diesel'] %}
+                {% if total_sales['speed_diesel_pump2'] and prices['speed_diesel'] %}
                 <div class="detail-item">
                     <div class="detail-label">Speed Diesel Pump 2</div>
-                    <div class="detail-value">{{ "%.0f"|format(sales['speed_diesel_pump2']) }} L</div>
-                    <div class="kpi-subtext">@ ₹ {{ "%.2f"|format(prices['speed_diesel']) }}/L = ₹ {{ "%.2f"|format((sales['speed_diesel_pump2'] or 0) * (prices['speed_diesel'] or 0)) }}</div>
+                    <div class="detail-value">{{ "%.0f"|format(total_sales['speed_diesel_pump2']) }} L</div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">@ ₹ {{ "%.2f"|format(prices['speed_diesel']) }}/L</div>
                 </div>
                 {% endif %}
-            </div>
-        </div>
-
-        <div class="details-section">
-            <h2>Financial Summary</h2>
-            <div class="detail-grid">
-                <div class="detail-item">
-                    <div class="detail-label">Total Liters Sold</div>
-                    <div class="detail-value">{{ "%.0f"|format((sales['petrol_pump1'] or 0) + (sales['speed_petrol_pump2'] or 0) + (sales['diesel_pump1'] or 0) + (sales['speed_diesel_pump2'] or 0)) }} L</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Revenue - Expenses</div>
-                    <div class="detail-value {% if net_income >= 0 %}positive{% else %}negative{% endif %}">₹ {{ "%.2f"|format(net_income) }}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Profit Margin</div>
-                    {% if revenue > 0 %}
-                    <div class="detail-value">{{ "%.1f"|format((net_income / revenue) * 100) }}%</div>
-                    {% else %}
-                    <div class="detail-value">-</div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="details-section">
-            <div class="no-data">
-                <p>⚠️ Please set prices first to see sales breakdown</p>
-                <a href="/set_price" style="color: #667eea; text-decoration: none; font-weight: 600;">Go to Set Price →</a>
             </div>
         </div>
         {% endif %}

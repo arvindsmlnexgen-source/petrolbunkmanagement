@@ -19,6 +19,22 @@ max-width:1100px;
 margin:auto;
 }
 
+.back-button {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 20px;
+    transition: background 0.3s ease;
+}
+
+.back-button:hover {
+    background: #764ba2;
+}
+
 h1{
 text-align:center;
 margin-bottom:30px;
@@ -69,19 +85,36 @@ background:#218838;
 
 <div class="container">
 
+<a href="/" class="back-button">← Back to Dashboard</a>
+
 <h1>Petrol Pump Sales</h1>
 
 <form method="POST">
 
+<!-- Date and Time -->
+<div class="card">
+<h2>Date & Time</h2>
+<div class="grid">
+<div>
+<h3>Date</h3>
+<input type="date" name="date" required>
+</div>
+<div>
+<h3>Time</h3>
+<input type="time" name="time" required>
+</div>
+</div>
+</div>
+
 <!-- Pump Cards -->
 
-<div class="card">
+<!-- <div class="card">
 
 <h2>Pump Sales (Litres)</h2>
 
-<div class="grid">
+<div class="grid"> -->
 
-<div>
+<!-- <div>
 <h3>Pump1 (Petrol)</h3>
 <input type="number" step="0.01" name="petrol_pump1" placeholder="Enter litres">
 </div>
@@ -103,7 +136,7 @@ background:#218838;
 
 </div>
 
-</div>
+</div> -->
 
 <!-- Meter Readings -->
 
@@ -115,7 +148,7 @@ background:#218838;
 
 <div>
 
-<h3>Petrol</h3>
+<h3>Petrol[Pump 1]</h3>
 
 Opening
 <input name="petrol_open">
@@ -131,7 +164,7 @@ Running
 
 <div>
 
-<h3>Speed Petrol</h3>
+<h3>Speed Petrol[Pump 2]</h3>
 
 Opening
 <input name="speed_petrol_open">
@@ -147,7 +180,7 @@ Running
 
 <div>
 
-<h3>Diesel</h3>
+<h3>Diesel[Pump 1]</h3>
 
 Opening
 <input name="diesel_open">
@@ -163,7 +196,7 @@ Running
 
 <div>
 
-<h3>Speed Diesel</h3>
+<h3>Speed Diesel[Pump 2]</h3>
 
 Opening
 <input name="speed_diesel_open">
