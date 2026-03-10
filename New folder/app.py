@@ -43,6 +43,17 @@ def init_db():
         cur.execute("ALTER TABLE sales ADD COLUMN time TEXT DEFAULT '00:00'")
     except:
         pass  # Column already exists
+    
+    # Add oil columns if they don't exist (for existing databases)
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN oil20 INTEGER DEFAULT 0")
+    except:
+        pass
+    
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN oil40 INTEGER DEFAULT 0")
+    except:
+        pass
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
@@ -117,13 +128,26 @@ def dashboard():
         petrol_pump1 REAL,
         speed_petrol_pump2 REAL,
         diesel_pump1 REAL,
-        speed_diesel_pump2 REAL
+        speed_diesel_pump2 REAL,
+        oil20 INTEGER,
+        oil40 INTEGER
     )
     """)
     
     # Add time column if it doesn't exist (migration for existing databases)
     try:
         cur.execute("ALTER TABLE sales ADD COLUMN time TEXT DEFAULT '00:00'")
+    except:
+        pass
+    
+    # Add oil columns if they don't exist (migration for existing databases)
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN oil20 INTEGER DEFAULT 0")
+    except:
+        pass
+    
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN oil40 INTEGER DEFAULT 0")
     except:
         pass
     
@@ -182,6 +206,8 @@ def sales():
         speed_petrol = request.form["speed_petrol"]
         diesel = request.form["diesel"]
         speed_diesel = request.form["speed_diesel"]
+        oil20 = request.form.get("oil20", 0)
+        oil40 = request.form.get("oil40", 0)
 
         db = get_db()
         cur = db.cursor()
@@ -193,10 +219,12 @@ def sales():
         petrol_pump1,
         speed_petrol_pump2,
         diesel_pump1,
-        speed_diesel_pump2
+        speed_diesel_pump2,
+        oil20,
+        oil40
         )
-        VALUES (?,?,?,?,?,?)
-        """, (date, time, petrol, speed_petrol, diesel, speed_diesel))
+        VALUES (?,?,?,?,?,?,?,?)
+        """, (date, time, petrol, speed_petrol, diesel, speed_diesel, oil20, oil40))
 
         db.commit()
 
@@ -460,7 +488,9 @@ def todays_sales():
         petrol_pump1 REAL,
         speed_petrol_pump2 REAL,
         diesel_pump1 REAL,
-        speed_diesel_pump2 REAL
+        speed_diesel_pump2 REAL,
+        oil20 INTEGER,
+        oil40 INTEGER
     )
     """)
     
