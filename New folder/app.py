@@ -30,6 +30,7 @@ def init_db():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
         description TEXT,
         amount REAL
     )
@@ -38,34 +39,47 @@ def init_db():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS cash_received (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
         source TEXT,
         amount REAL
     )
     """)
+    
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS meter (
+    CREATE TABLE IF NOT EXISTS credits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         date TEXT,
-
-        petrol_open REAL,
-        petrol_close REAL,
-
-        speed_petrol_open REAL,
-        speed_petrol_close REAL,
-
-        diesel_open REAL,
-        diesel_close REAL,
-
-        speed_diesel_open REAL,
-        speed_diesel_close REAL,
-
-        oil20_open INTEGER,
-        oil20_sold INTEGER,
-
-        oil40_open INTEGER,
-        oil40_sold INTEGER
+        customer_name TEXT,
+        fuel_type TEXT,
+        litres REAL,
+        amount REAL
     )
     """)
+    
+    cur.execute("""
+CREATE TABLE IF NOT EXISTS meter (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT,
+
+    petrol_open REAL,
+    petrol_close REAL,
+
+    speed_petrol_open REAL,
+    speed_petrol_close REAL,
+
+    diesel_open REAL,
+    diesel_close REAL,
+
+    speed_diesel_open REAL,
+    speed_diesel_close REAL,
+
+    oil20_open INTEGER,
+    oil20_sold INTEGER,
+
+    oil40_open INTEGER,
+    oil40_sold INTEGER
+)
+""")
 
     conn.commit()
     conn.close()
@@ -146,7 +160,7 @@ def expenses():
         cur = db.cursor()
 
         cur.execute(
-            "INSERT INTO expenses (description,amount) VALUES (?,?)",
+            "INSERT INTO expenses (date,description,amount) VALUES (date('now'),?,?)",
             (description, amount)
         )
 
@@ -169,7 +183,7 @@ def cash():
         cur = db.cursor()
 
         cur.execute(
-            "INSERT INTO cash_received (source,amount) VALUES (?,?)",
+            "INSERT INTO cash_received (date,source,amount) VALUES (date('now'),?,?)",
             (source, amount)
         )
 
@@ -254,9 +268,7 @@ def daily_report():
     SUM(petrol_pump1),
     SUM(speed_petrol_pump2),
     SUM(diesel_pump1),
-    SUM(speed_diesel_pump2),
-    SUM(oil_20ml),
-    SUM(oil_40ml)
+    SUM(speed_diesel_pump2)
     FROM sales
     WHERE date = date('now')
     """)
@@ -357,95 +369,42 @@ def monthly_report():
 #     data = cur.fetchone()
 
 #     return render_template("set_price.html",data=data)
-# @app.route("/meter", methods=["GET","POST"])
-# def meter():
-
-#     db = get_db()
-#     cur = db.cursor()
-
-#     if request.method == "POST":
-
-#         pump = request.form["pump"]
-#         opening = request.form["opening"]
-#         closing = request.form["closing"]
-
-#         running = float(opening) - float(closing)
-
-#         cur.execute("""
-#         CREATE TABLE IF NOT EXISTS meter(
-#         id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         pump TEXT,
-#         opening REAL,
-#         closing REAL,
-#         running REAL
-#         )
-#         """)
-
-#         cur.execute(
-#         "INSERT INTO meter(pump,opening,closing,running) VALUES (?,?,?,?)",
-#         (pump, opening, closing, running)
-#         )
-
-#         db.commit()
-
-#     cur.execute("SELECT * FROM meter")
-#     data = cur.fetchall()
-
-#     return render_template("meter.html", data=data)
-@app.route("/meter", methods=["GET", "POST"])
+@app.route("/meter", methods=["GET","POST"])
 def meter():
+
+    db = get_db()
+    cur = db.cursor()
 
     if request.method == "POST":
 
-        date = request.form["date"]
+        pump = request.form["pump"]
+        opening = request.form["opening"]
+        closing = request.form["closing"]
 
-        petrol_open = request.form["petrol_open"]
-        petrol_close = request.form["petrol_close"]
-
-        speed_petrol_open = request.form["speed_petrol_open"]
-        speed_petrol_close = request.form["speed_petrol_close"]
-
-        diesel_open = request.form["diesel_open"]
-        diesel_close = request.form["diesel_close"]
-
-        speed_diesel_open = request.form["speed_diesel_open"]
-        speed_diesel_close = request.form["speed_diesel_close"]
-
-        oil20_open = request.form["oil20_open"]
-        oil20_sold = request.form["oil20_sold"]
-
-        oil40_open = request.form["oil40_open"]
-        oil40_sold = request.form["oil40_sold"]
-
-        db = get_db()
-        cur = db.cursor()
+        running = float(opening) - float(closing)
 
         cur.execute("""
-        INSERT INTO meter(
-        date,
-        petrol_open, petrol_close,
-        speed_petrol_open, speed_petrol_close,
-        diesel_open, diesel_close,
-        speed_diesel_open, speed_diesel_close,
-        oil20_open, oil20_sold,
-        oil40_open, oil40_sold
+        CREATE TABLE IF NOT EXISTS meter(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pump TEXT,
+        opening REAL,
+        closing REAL,
+        running REAL
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
-        """, (
-            date,
-            petrol_open, petrol_close,
-            speed_petrol_open, speed_petrol_close,
-            diesel_open, diesel_close,
-            speed_diesel_open, speed_diesel_close,
-            oil20_open, oil20_sold,
-            oil40_open, oil40_sold
-        ))
+        """)
+
+        cur.execute(
+        "INSERT INTO meter(pump,opening,closing,running) VALUES (?,?,?,?)",
+        (pump, opening, closing, running)
+        )
 
         db.commit()
 
-        return redirect("/")
+    cur.execute("SELECT * FROM meter")
+    data = cur.fetchall()
 
-    return render_template("meter.html")
+    return render_template("meter.html", data=data)
+
 @app.route("/transactions", methods=["GET","POST"])
 def transactions():
 
