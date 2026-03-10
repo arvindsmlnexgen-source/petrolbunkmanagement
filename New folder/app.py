@@ -415,6 +415,102 @@ def monthly_report():
     return render_template("monthly_report.html",data=data)
 
 
+@app.route("/todays_sales")
+def todays_sales():
+    
+    db = get_db()
+    cur = db.cursor()
+    
+    # Ensure tables exist
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS sales (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        petrol_pump1 REAL,
+        speed_petrol_pump2 REAL,
+        diesel_pump1 REAL,
+        speed_diesel_pump2 REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        description TEXT,
+        amount REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS prices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        petrol REAL,
+        speed_petrol REAL,
+        diesel REAL,
+        speed_diesel REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS credits (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        customer_name TEXT,
+        fuel_type TEXT,
+        litres REAL,
+        amount REAL
+    )
+    """)
+    db.commit()
+    
+    # Get today's sales data
+    cur.execute("""
+    SELECT 
+    SUM(petrol_pump1) as petrol_pump1,
+    SUM(speed_petrol_pump2) as speed_petrol_pump2,
+    SUM(diesel_pump1) as diesel_pump1,
+    SUM(speed_diesel_pump2) as speed_diesel_pump2
+    FROM sales
+    WHERE date = date('now')
+    """)
+    
+    sales = cur.fetchone()
+    
+    # Get today's prices
+    cur.execute("SELECT * FROM prices LIMIT 1")
+    prices = cur.fetchone()
+    
+    # Calculate revenue
+    revenue = 0
+    if sales and prices:
+        revenue += (sales['petrol_pump1'] or 0) * (prices['petrol'] or 0)
+        revenue += (sales['speed_petrol_pump2'] or 0) * (prices['speed_petrol'] or 0)
+        revenue += (sales['diesel_pump1'] or 0) * (prices['diesel'] or 0)
+        revenue += (sales['speed_diesel_pump2'] or 0) * (prices['speed_diesel'] or 0)
+    
+    # Get today's expenses
+    cur.execute("SELECT SUM(amount) as total_expenses FROM expenses WHERE date=date('now')")
+    expenses_result = cur.fetchone()
+    expenses = expenses_result['total_expenses'] or 0
+    
+    # Get today's credit sales
+    cur.execute("SELECT SUM(amount) as total_credit FROM credits WHERE date=date('now')")
+    credit_result = cur.fetchone()
+    credit_sales = credit_result['total_credit'] or 0
+    
+    # Calculate net income
+    net_income = revenue - expenses
+    
+    return render_template("todays_sales.html",
+                           revenue=revenue,
+                           expenses=expenses,
+                           credit_sales=credit_sales,
+                           net_income=net_income,
+                           sales=sales,
+                           prices=prices)
+
+
 
 # @app.route("/set_price", methods=["GET","POST"])
 # def set_price():
