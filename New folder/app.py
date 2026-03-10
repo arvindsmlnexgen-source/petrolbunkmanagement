@@ -37,6 +37,12 @@ def init_db():
         speed_diesel_pump2 REAL
     )
     """)
+    
+    # Add time column if it doesn't exist (for existing databases)
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN time TEXT DEFAULT '00:00'")
+    except:
+        pass  # Column already exists
 
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
@@ -114,6 +120,12 @@ def dashboard():
         speed_diesel_pump2 REAL
     )
     """)
+    
+    # Add time column if it doesn't exist (migration for existing databases)
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN time TEXT DEFAULT '00:00'")
+    except:
+        pass
     
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
@@ -451,6 +463,12 @@ def todays_sales():
         speed_diesel_pump2 REAL
     )
     """)
+    
+    # Add time column if it doesn't exist (migration)
+    try:
+        cur.execute("ALTER TABLE sales ADD COLUMN time TEXT DEFAULT '00:00'")
+    except:
+        pass
     
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expenses (
