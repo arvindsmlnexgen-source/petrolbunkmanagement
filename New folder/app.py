@@ -90,6 +90,37 @@ def dashboard():
 
     db = get_db()
     cur = db.cursor()
+    
+    # Ensure sales table exists
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS sales (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        petrol_pump1 REAL,
+        speed_petrol_pump2 REAL,
+        diesel_pump1 REAL,
+        speed_diesel_pump2 REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        description TEXT,
+        amount REAL
+    )
+    """)
+    
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS cash_received (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        source TEXT,
+        amount REAL
+    )
+    """)
+    db.commit()
 
     cur.execute("""
     SELECT 
